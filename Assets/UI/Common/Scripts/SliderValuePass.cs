@@ -11,7 +11,6 @@ public class SliderValuePass : MonoBehaviour
 	void Start()
 	{
 		progress = GetComponent<Text>();
-
 	}
 
 	public void UpdateProgress(float content)

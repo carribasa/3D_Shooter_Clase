@@ -7,7 +7,8 @@ public class GameManager : MonoBehaviour
 {
     private static GameManager instance;
     public static GameManager Instance { get { return instance; } }
-    [SerializeField] GameObject panelStartGame, panelScore, panelTime, shootingBarrels;
+    public static GameStatus currentGameStatus = GameStatus.Playing;
+    [SerializeField] GameObject panelStartGame, panelPause, panelScore, panelTime, shootingBarrels;
     [SerializeField] List<GameObject> textsFinalPanel, starsPanel;
     public GameObject player;
     public int score, numBarrels;
@@ -36,6 +37,7 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         StartCountdown();
+        PauseGame();
     }
 
     private void ActivateStartPanel()
@@ -110,11 +112,38 @@ public class GameManager : MonoBehaviour
             starsPanel[1].GetComponent<Toggle>().isOn = true;
             starsPanel[2].GetComponent<Toggle>().isOn = true;
         }
-        Cursor.lockState = CursorLockMode.None; // Habilito el cursos para poder seleccionar accion
+        Cursor.lockState = CursorLockMode.None; // Habilito el cursor para poder seleccionar accion
+    }
+
+    public void PauseGame()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            TogglePause();
+        }
+    }
+
+    public void TogglePause()
+    {
+        if (currentGameStatus == GameStatus.Playing)
+        {
+            Time.timeScale = 0;
+            currentGameStatus = GameStatus.Paused;
+            panelPause.SetActive(true);
+            Cursor.lockState = CursorLockMode.None;
+        }
+        else if (currentGameStatus == GameStatus.Paused)
+        {
+            Time.timeScale = 1;
+            currentGameStatus = GameStatus.Playing;
+            panelPause.SetActive(false);
+            Cursor.lockState = CursorLockMode.Locked;
+        }
     }
 
     public void RestartGame()
     {
+        Time.timeScale = 1;
         SceneManager.LoadScene(0);
     }
 
